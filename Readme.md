@@ -132,6 +132,8 @@ Send a `POST` request to `http://localhost:8080/calculate` with a JSON body like
 ### Expected Output
 
 For an order of 800 items with the pack sizes `[5000, 2000, 1000, 500, 250]`, the expected output will be:
+```
+
 
 ```bash
 Result: map[1000:1]
