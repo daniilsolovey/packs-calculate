@@ -1,27 +1,35 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
 
 	"github.com/daniilsolovey/packs-calculate/api"
+	"github.com/daniilsolovey/packs-calculate/config"
 )
 
-// func main() {
-// 	number := 800
-// 	packs := []int{5000, 2000, 1000, 500, 250}
-
-// 	result, err := pack.CalculatePacks(number, packs)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	fmt.Println("Result:", result)
-// }
-
 func main() {
-	// Start the API server
-	api.StartServer()
+	// Define a flag for the .env file location
+	envFilePath := flag.String("env", "", "Path to the .env file")
+	flag.Parse()
+
+	// Load the configuration
+	cfg, err := config.LoadConfig(*envFilePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Check if .env file was used or default values were used
+	if *envFilePath != "" {
+		fmt.Printf("Using configuration from file, path to file: %s\n", *envFilePath)
+	} else {
+		fmt.Println("No .env file provided, using default environment variables.")
+	}
+
+	// Start the API server with the loaded configuration
+	api.StartServer(cfg)
 
 	// Optionally print something indicating the server is up
-	fmt.Println("API server started on http://localhost:8080")
+	fmt.Println("API server started")
 }

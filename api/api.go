@@ -6,19 +6,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/daniilsolovey/packs-calculate/config"
 	"github.com/daniilsolovey/packs-calculate/internal/pack"
 )
 
-// The available pack sizes, used across the application
-var packSizes = []int{5000, 2000, 1000, 500, 250}
-
 // API handler to calculate optimal packs
-func CalculatePacksHandler(w http.ResponseWriter, r *http.Request) {
+func CalculatePacksHandler(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
 	// Ensure the request method is POST
 	if r.Method != http.MethodPost {
-		http.Error(
-			w, "Invalid request method", http.StatusMethodNotAllowed,
-		)
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -26,38 +22,32 @@ func CalculatePacksHandler(w http.ResponseWriter, r *http.Request) {
 	var request struct {
 		Number int `json:"number"`
 	}
-
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(
-			w, "Invalid input", http.StatusBadRequest,
-		)
+		http.Error(w, "Invalid input", http.StatusBadRequest)
 		return
 	}
 
-	// Calculate the optimal number of packs
-	result, err := pack.CalculatePacks(request.Number, packSizes)
+	// Calculate the optimal number of packs using the loaded pack sizes
+	result, err := pack.CalculatePacks(request.Number, cfg.PackSizes)
 	if err != nil {
-		http.Error(
-			w, fmt.Sprintf("Error calculating packs: %v", err),
-			http.StatusInternalServerError,
-		)
+		http.Error(w, fmt.Sprintf("Error calculating packs: %v", err), http.StatusInternalServerError)
 		return
 	}
 
 	// Return the result as a JSON response
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(result); err != nil {
-		http.Error(
-			w, "Error encoding response", http.StatusInternalServerError,
-		)
+		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 	}
 }
 
 // StartServer starts the HTTP server with all routes
-func StartServer() {
-	http.HandleFunc("/calculate", CalculatePacksHandler)
+func StartServer(cfg *config.Config) {
+	http.HandleFunc("/calculate", func(w http.ResponseWriter, r *http.Request) {
+		CalculatePacksHandler(w, r, cfg)
+	})
 
-	port := "8080"
-	fmt.Println("Server is running on port", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	address := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)
+	fmt.Println("Server is running on", address)
+	log.Fatal(http.ListenAndServe(address, nil))
 }
