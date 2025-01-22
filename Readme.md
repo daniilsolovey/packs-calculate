@@ -35,7 +35,7 @@ go mod tidy
 You can build the Go application using:
 
 ```bash
-go build -o packs-calculate .
+make build
 ```
 
 After building, you can run the application with:
@@ -51,13 +51,13 @@ By default, the application will calculate the packs for a predefined order.
 If you want to run the application inside a container, build the Docker image with the following command:
 
 ```bash
-docker build -t packs-calculate .
+make docker-build
 ```
 
 After the image is built, run the application inside a Docker container:
 
 ```bash
-docker run --rm packs-calculate
+make docker-run
 ```
 
 ### Running with Environment Variables
@@ -82,7 +82,7 @@ PACK_SIZES=5000,2000,1000,500,250
 Run the application by specifying the `.env` file with the `-env` flag:
 
 ```bash
-go run cmd/calculate/main.go -env=.env
+./packs-calculate -env=.env
 ```
 
 If the `.env` file exists, the application will load the configuration from it.
@@ -96,7 +96,7 @@ export API_HOST="localhost"
 export API_PORT="8080"
 export PACK_SIZES="5000,2000,1000,500,250"
 
-go run cmd/calculate/main.go
+./packs-calculate
 ```
 
 If the `.env` file is not provided, the application will fall back to using the environment variables.
@@ -106,7 +106,7 @@ If the `.env` file is not provided, the application will fall back to using the 
 To run the tests for this application:
 
 ```bash
-go test -v
+make test
 ```
 
 This will run all the unit tests defined in `internal/pack/pack_test.go`.

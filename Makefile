@@ -17,7 +17,7 @@ all: build
 .PHONY: build
 build:
 	$(GO_MOD_TIDY)
-	$(GO_BUILD) -o packs-calculate $(BUILD_DIR)
+	$(GO_BUILD) -C $(BUILD_DIR) -o ../../packs-calculate
 
 # Run tests
 .PHONY: test
