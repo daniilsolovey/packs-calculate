@@ -1,6 +1,10 @@
 
 # Packs-Calculate
 
+
+![alt text](images/packs-calculate.gif)
+
+
 A Go application to calculate the optimal number of packs required to fulfill an order. The app minimizes the number of packs used while ensuring that the required number of items is fulfilled using the smallest number of packs.
 
 ## Features
@@ -138,6 +142,16 @@ curl -X POST http://localhost:8080/calculate -d '{"number": 800}' -H "Content-Ty
 
 ```
 
+### Example Usage with simple UI
+
+Go to http://localhost:8080/ in browser
+
+Enter numbers of items, then tap "Calculate Packs"
+
+![alt text](images/packs-calculate.png)
+
+
+
 ### Folder Structure
 
 ```
@@ -148,6 +162,8 @@ packs-calculate/
 │   ├── pack/           # Packing algorithm logic
 │   └── utils/          # Utility functions (optional)
 ├── pkg/                # Public shared libraries (optional)
+├── ui/                 # UI
+│   ├── index.html/     # index.html
 ├── api/                # API folder for HTTP server and routes
 │   └── api.go          # API routes and server
 ├── config/             # Configuration management
