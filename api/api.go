@@ -43,6 +43,8 @@ func CalculatePacksHandler(w http.ResponseWriter, r *http.Request, cfg *config.C
 
 // StartServer starts the HTTP server with all routes
 func StartServer(cfg *config.Config) {
+	http.Handle("/", http.FileServer(http.Dir("./ui")))
+
 	http.HandleFunc("/calculate", func(w http.ResponseWriter, r *http.Request) {
 		CalculatePacksHandler(w, r, cfg)
 	})
