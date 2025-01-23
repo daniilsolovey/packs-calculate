@@ -5,8 +5,19 @@ import (
 	"sort"
 )
 
+type PackCalculator interface {
+	CalculatePacks(number int, packs []int) (map[int]int, error)
+}
+
+// PCalculator implements the PackCalculator interface.
+type PCalculator struct{}
+
+func NewPackCalculator() *PCalculator {
+	return &PCalculator{}
+}
+
 // CalculatePacks calculates the optimal number of packs for a given order.
-func CalculatePacks(number int, packs []int) (map[int]int, error) {
+func (c *PCalculator) CalculatePacks(number int, packs []int) (map[int]int, error) {
 	if number <= 0 {
 		return nil, errors.New("number must be greater than zero")
 	}

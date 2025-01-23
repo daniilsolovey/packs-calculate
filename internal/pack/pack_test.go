@@ -6,6 +6,8 @@ import (
 )
 
 func TestCalculatePacks(t *testing.T) {
+	calculator := &PCalculator{}
+
 	tests := []struct {
 		order          int
 		expectedResult map[int]int
@@ -28,7 +30,7 @@ func TestCalculatePacks(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(fmt.Sprintf("Order %d", test.order), func(t *testing.T) {
-			result, err := CalculatePacks(test.order, []int{5000, 2000, 1000, 500, 250})
+			result, err := calculator.CalculatePacks(test.order, []int{5000, 2000, 1000, 500, 250})
 			if err != nil {
 				t.Fatal(err)
 			}

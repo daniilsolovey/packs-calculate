@@ -11,7 +11,9 @@ import (
 )
 
 // API handler to calculate optimal packs
-func CalculatePacksHandler(w http.ResponseWriter, r *http.Request, cfg *config.Config) {
+func CalculatePacksHandler(w http.ResponseWriter, r *http.Request,
+	cfg *config.Config,
+	packCalculator pack.PackCalculator) {
 	// Ensure the request method is POST
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
@@ -28,9 +30,11 @@ func CalculatePacksHandler(w http.ResponseWriter, r *http.Request, cfg *config.C
 	}
 
 	// Calculate the optimal number of packs using the loaded pack sizes
-	result, err := pack.CalculatePacks(request.Number, cfg.PackSizes)
+	result, err := packCalculator.CalculatePacks(request.Number, cfg.PackSizes)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error calculating packs: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error calculating packs: %v", err),
+			http.StatusInternalServerError,
+		)
 		return
 	}
 
@@ -42,11 +46,11 @@ func CalculatePacksHandler(w http.ResponseWriter, r *http.Request, cfg *config.C
 }
 
 // StartServer starts the HTTP server with all routes
-func StartServer(cfg *config.Config) {
+func StartServer(cfg *config.Config, calculator pack.PackCalculator) {
 	http.Handle("/", http.FileServer(http.Dir("./ui")))
 
 	http.HandleFunc("/calculate", func(w http.ResponseWriter, r *http.Request) {
-		CalculatePacksHandler(w, r, cfg)
+		CalculatePacksHandler(w, r, cfg, calculator)
 	})
 
 	address := fmt.Sprintf("%s:%s", cfg.Host, cfg.Port)

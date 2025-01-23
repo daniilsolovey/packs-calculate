@@ -7,6 +7,7 @@ import (
 
 	"github.com/daniilsolovey/packs-calculate/api"
 	"github.com/daniilsolovey/packs-calculate/config"
+	"github.com/daniilsolovey/packs-calculate/internal/pack"
 )
 
 func main() {
@@ -27,8 +28,11 @@ func main() {
 		fmt.Println("No .env file provided, using default environment variables.")
 	}
 
+	// Create a packCalculator instance using the constructor
+	packCalculator := pack.NewPackCalculator()
+
 	// Start the API server with the loaded configuration
-	api.StartServer(cfg)
+	api.StartServer(cfg, packCalculator)
 
 	// Optionally print something indicating the server is up
 	fmt.Println("API server started")
