@@ -2,7 +2,7 @@
 # Packs-Calculate
 
 
-![alt text](images/packs-calculate.gif)
+![alt text](images/packs-calculate1.gif)
 
 
 A Go application to calculate the optimal number of packs required to fulfill an order. The app minimizes the number of packs used while ensuring that the required number of items is fulfilled using the smallest number of packs.
