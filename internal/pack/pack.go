@@ -2,6 +2,7 @@ package pack
 
 import (
 	"errors"
+	"math"
 	"sort"
 )
 
@@ -26,48 +27,60 @@ func (c *PCalculator) CalculatePacks(number int, packs []int) (map[int]int, erro
 		return nil, errors.New("packs list cannot be empty")
 	}
 
-	sort.Sort(sort.Reverse(sort.IntSlice(packs)))
-	result := make(map[int]int)
+	// calculate the maximum numbers possible in result
+	maxValues := number + getMinimumPack(packs) + 1
+	temp := maxValues
 
-	for _, packSize := range packs {
-		if number >= packSize {
-			count := number / packSize
-			result[packSize] = count
-			number -= count * packSize
-		}
+	// initialize the dynamicArray array and set values with 0
+	dynamicArray := make([]int, maxValues)
+	dynamicArray[0] = 0
+	for i := 1; i < maxValues; i++ {
+		dynamicArray[i] = -1
 	}
 
-	if number > 0 {
-		smallestPack := packs[len(packs)-1]
-		result[smallestPack]++
-		number = 0
-	}
+	// add values to dynamic array based on the packs
+	for _, i := range packs {
+		for j := i; j < maxValues; j++ {
+			if dynamicArray[j-i] == -1 {
+				continue
+			}
 
-	return optimizeResult(result, packs)
-}
+			if dynamicArray[j] == -1 {
+				dynamicArray[j] = dynamicArray[j-i] + 1
+			} else {
+				dynamicArray[j] = int(
+					math.Min(
+						float64(dynamicArray[j]),
+						float64(dynamicArray[j-i]+1),
+					),
+				)
+			}
 
-// optimizeResult tries to consolidate smaller packs into a larger one.
-func optimizeResult(result map[int]int, packs []int) (map[int]int, error) {
-	optimized := false
-	for packSize, count := range result {
-		for _, largerPack := range packs {
-			if packSize < largerPack && count >= 2 {
-				if packSize*count >= largerPack {
-					result[largerPack]++
-					result[packSize] -= 2
-					if result[packSize] <= 0 {
-						delete(result, packSize)
-					}
-					optimized = true
-					break
-				}
+			if j >= number {
+				temp = int(
+					math.Min(float64(temp),
+						float64(j)),
+				)
 			}
 		}
 	}
 
-	if optimized {
-		return optimizeResult(result, packs)
+	// create the result map
+	result := make(map[int]int)
+	for temp != 0 {
+		for _, i := range packs {
+			if temp >= i && dynamicArray[temp-i]+1 == dynamicArray[temp] {
+				temp = temp - i
+				result[i]++
+				break
+			}
+		}
 	}
 
 	return result, nil
+}
+
+func getMinimumPack(data []int) int {
+	sort.Ints(data)
+	return data[0]
 }

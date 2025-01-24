@@ -42,6 +42,32 @@ func TestCalculatePacks(t *testing.T) {
 	}
 }
 
+// Test for order size 14 with new pack sizes 12 and 5
+
+func TestCalculatePacksWithNewSizes(t *testing.T) {
+	calculator := &PCalculator{}
+
+	tests := []struct {
+		order          int
+		expectedResult map[int]int
+	}{
+		{14, map[int]int{5: 3}},
+	}
+
+	for _, test := range tests {
+		t.Run(fmt.Sprintf("Order %d", test.order), func(t *testing.T) {
+			result, err := calculator.CalculatePacks(test.order, []int{12, 5})
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			if !compareResults(result, test.expectedResult) {
+				t.Errorf("Expected %v, got %v", test.expectedResult, result)
+			}
+		})
+	}
+}
+
 func compareResults(a, b map[int]int) bool {
 	if len(a) != len(b) {
 		return false
